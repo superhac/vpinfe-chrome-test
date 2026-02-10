@@ -1,0 +1,10 @@
+**/__pycache__/
+/vvv
+*.ini
+*.json
+profile_*/
+chromium/
+
+# PyInstaller build directories
+build/
+dist/
