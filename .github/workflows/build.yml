@@ -63,12 +63,13 @@ jobs:
           Invoke-WebRequest -Uri 'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media' `
           -OutFile 'chromium/windows/chrome.zip' -UseBasicParsing
           "
-        powershell -Command "
-          Expand-Archive chromium/windows/chrome.zip -DestinationPath chromium/windows;
-          Move-Item chromium/windows/chrome-win/chrome.exe chromium/windows/chrome.exe;
-          Remove-Item -Recurse -Force chromium/windows/chrome-win;
-          Remove-Item chromium/windows/chrome.zip;
-          "
+          powershell -Command "
+            Expand-Archive chromium/windows/chrome.zip -DestinationPath chromium/windows;
+            Move-Item chromium/windows/chrome-win/chrome.exe chromium/windows/chrome.exe;
+            Remove-Item -Recurse -Force chromium/windows/chrome-win;
+            Remove-Item chromium/windows/chrome.zip;
+            "
+
       # 7. Download Mac Chromium
       - name: Download Mac Chromium
         if: runner.os == 'macOS'
