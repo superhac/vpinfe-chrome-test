@@ -59,7 +59,7 @@ jobs:
       - name: Download Windows Chromium
         if: runner.os == 'Windows'
         run: |
-          powershell -Command "Invoke-WebRequest -OutFile chromium/windows/chrome.zip 'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media'"
+          curl -L -o chromium/windows/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media"
           powershell -Command "Expand-Archive chromium/windows/chrome.zip -DestinationPath chromium/windows"
 
       # 7. Download Mac Chromium
