@@ -9,11 +9,11 @@ on:
 
 jobs:
   build:
-    # Matrix for Linux, Windows, and Mac
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       # 1. Checkout repo
@@ -33,7 +33,12 @@ jobs:
 
       # 4. Create Chromium directories
       - name: Create directories for Chromium
-        run: mkdir -p chromium/linux chromium/windows chromium/mac
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]] || [[ "$RUNNER_OS" == "macOS" ]]; then
+            mkdir -p chromium/linux chromium/windows chromium/mac
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            New-Item -ItemType Directory -Force -Path chromium\linux,chromium\windows,chromium\mac
+          fi
 
       # 5. Download Linux Chromium
       - name: Download Linux Chromium
@@ -49,7 +54,7 @@ jobs:
           powershell -Command "Invoke-WebRequest -OutFile chromium/windows/chrome.zip 'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media'"
           powershell -Command "Expand-Archive chromium/windows/chrome.zip -DestinationPath chromium/windows"
 
-      # Mac download step
+      # 7. Download Mac Chromium
       - name: Download Mac Chromium
         if: runner.os == 'macOS'
         run: |
@@ -68,7 +73,7 @@ jobs:
             pyinstaller --onedir --windowed --add-data "chromium/mac/Chromium.app:chromium/mac" embchrometest.py
           fi
 
-      # 9. Upload artifact
+      # 9. Upload artifact per OS
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
