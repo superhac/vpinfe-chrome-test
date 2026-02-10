@@ -34,19 +34,19 @@ jobs:
       # 5. Download Linux Chromium
       - name: Download Linux Chromium
         run: |
-          wget -O chromium/linux/chrome.zip https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/103000/chrome-linux.zip
+          wget -O chromium/linux/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64/1582450/chrome-linux.zip
           unzip -q chromium/linux/chrome.zip -d chromium/linux
 
       # 6. Download Windows Chromium
       - name: Download Windows Chromium
         run: |
-          wget -O chromium/windows/chrome.zip https://commondatastorage.googleapis.com/chromium-browser-snapshots/Win_x64/103000/chrome-win.zip
+          wget -O chromium/windows/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64/999988/chrome-win.zip
           unzip -q chromium/windows/chrome.zip -d chromium/windows
 
       # 7. Download Mac Chromium
       - name: Download Mac Chromium
         run: |
-          wget -O chromium/mac/chrome.zip https://commondatastorage.googleapis.com/chromium-browser-snapshots/Mac/103000/chrome-mac.zip
+          wget -O chromium/mac/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac/999994/chrome-mac.zip
           unzip -q chromium/mac/chrome.zip -d chromium/mac
 
       # 8. Build your app with PyInstaller (example)
