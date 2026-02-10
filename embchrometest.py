@@ -24,7 +24,7 @@ def get_chromium_path():
     system = platform.system()
 
     if system == "Windows":
-        return resource_path("chromium/windows/chrome.exe")
+        return resource_path("chromium/windows/chrome-win/chrome.exe")
     elif system == "Darwin":
         return resource_path("chromium/mac/Chromium.app/Contents/MacOS/Chromium")
     elif system == "Linux":
