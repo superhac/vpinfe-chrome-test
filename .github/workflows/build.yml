@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout your repo
+      # 1. Checkout the repo
       - uses: actions/checkout@v3
 
-      # 2. Set up Python
-      - name: Set up Python 3.14
+      # 2. Set up Python 3.14
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.14'
@@ -34,22 +34,31 @@ jobs:
       # 5. Download Linux Chromium
       - name: Download Linux Chromium
         run: |
-          wget -O chromium/linux/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64/1582450/chrome-linux.zip
+          wget -O chromium/linux/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1582450%2Fchrome-linux.zip?generation=1770732071613898&alt=media
           unzip -q chromium/linux/chrome.zip -d chromium/linux
 
       # 6. Download Windows Chromium
       - name: Download Windows Chromium
         run: |
-          wget -O chromium/windows/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64/999988/chrome-win.zip
+          wget -O chromium/windows/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?generation=1770730132403393&alt=media
           unzip -q chromium/windows/chrome.zip -d chromium/windows
 
       # 7. Download Mac Chromium
       - name: Download Mac Chromium
         run: |
-          wget -O chromium/mac/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac/999994/chrome-mac.zip
+          wget -O chromium/mac/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?generation=1770732771294362&alt=media
           unzip -q chromium/mac/chrome.zip -d chromium/mac
 
-      # 8. Build your app with PyInstaller (example)
-      - name: Build with PyInstaller
+      # 8. Build the app with PyInstaller
+      - name: Build app with PyInstaller
         run: |
           pyinstaller --onefile your_main_script.py
+          # If you have a GUI app, you can add --noconsole
+          # pyinstaller --onefile --noconsole your_main_script.py
+
+      # 9. Upload the build as an artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: chromium-app
+          path: dist/
