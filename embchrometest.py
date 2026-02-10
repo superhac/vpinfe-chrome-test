@@ -50,9 +50,8 @@ def launch_for_monitor(chrome_path, monitor, index):
         "--disable-restore-session-state",
     ]
 
-    if platform.system() == "Linux":
-        args.append("--no-sandbox")
-        args.append("–-test-type")
+    #if platform.system() == "Linux":
+        #args.append("--no-sandbox")
 
     # Launch process
     return subprocess.Popen(args)
