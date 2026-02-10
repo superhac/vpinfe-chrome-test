@@ -67,11 +67,11 @@ jobs:
       - name: Download Mac Chromium
         if: runner.os == 'macOS'
         run: |
-          curl -L -o chromium/mac/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?alt=media"
-          unzip -q chromium/mac/chrome.zip -d chromium/mac
-          mv chromium/mac/chrome-mac/Chromium.app chromium/mac/Chromium.app
-          # Ensure Mac binary is executable
-          chmod -R +x chromium/mac/Chromium.app/Contents/MacOS/Chromium
+          mkdir -p chromium
+          curl -L -o chrome-mac.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?alt=media"
+          unzip -q chrome-mac.zip
+          mv chrome-mac/Chromium.app chromium/Chromium.app
+          rm -rf chrome-mac chrome-mac.zip
 
       # 8. Build with PyInstaller
       - name: Build app with PyInstaller
