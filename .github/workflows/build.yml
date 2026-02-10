@@ -1,3 +1,4 @@
+# .github/workflows/build.yml
 name: Build Chromium App (Cross-Platform)
 
 on:
@@ -49,6 +50,8 @@ jobs:
         run: |
           wget -O chromium/linux/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1582450%2Fchrome-linux.zip?alt=media"
           unzip -q chromium/linux/chrome.zip -d chromium/linux
+          # Rename folder to match app expectation
+          mv chromium/linux/chrome-linux chromium/linux/chrome
 
       # 6. Download Windows Chromium
       - name: Download Windows Chromium
@@ -77,7 +80,7 @@ jobs:
           fi
         shell: bash
 
-      # 9. Upload artifact
+      # 9. Upload artifact per OS
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
