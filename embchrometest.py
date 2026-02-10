@@ -52,6 +52,7 @@ def launch_for_monitor(chrome_path, monitor, index):
 
     if platform.system() == "Linux":
         args.append("--no-sandbox")
+        args.append("–-test-type")
 
     # Launch process
     return subprocess.Popen(args)
