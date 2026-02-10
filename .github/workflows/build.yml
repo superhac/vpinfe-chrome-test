@@ -1,4 +1,3 @@
-# .github/workflows/build.yml
 name: Build Chromium App (Cross-Platform)
 
 on:
@@ -31,14 +30,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install screeninfo pyinstaller
 
-      # 4. Create Chromium directories
-      - name: Create directories for Chromium
+      # 4a. Create Chromium directories for Linux/macOS
+      - name: Create Chromium directories (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
-          if [[ "$RUNNER_OS" == "Linux" ]] || [[ "$RUNNER_OS" == "macOS" ]]; then
-            mkdir -p chromium/linux chromium/windows chromium/mac
-          elif [[ "$RUNNER_OS" == "Windows" ]]; then
-            New-Item -ItemType Directory -Force -Path chromium\linux,chromium\windows,chromium\mac
-          fi
+          mkdir -p chromium/linux chromium/windows chromium/mac
+        shell: bash
+
+      # 4b. Create Chromium directories for Windows
+      - name: Create Chromium directories (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          New-Item -ItemType Directory -Force -Path chromium\linux,chromium\windows,chromium\mac
 
       # 5. Download Linux Chromium
       - name: Download Linux Chromium
@@ -62,7 +65,7 @@ jobs:
           unzip -q chromium/mac/chrome.zip -d chromium/mac
           mv chromium/mac/chrome-mac/Chromium.app chromium/mac/Chromium.app
 
-      # 8. Build app with PyInstaller
+      # 8. Build with PyInstaller
       - name: Build app with PyInstaller
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
@@ -72,8 +75,9 @@ jobs:
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
             pyinstaller --onedir --windowed --add-data "chromium/mac/Chromium.app:chromium/mac" embchrometest.py
           fi
+        shell: bash
 
-      # 9. Upload artifact per OS
+      # 9. Upload artifact
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
