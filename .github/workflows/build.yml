@@ -1,5 +1,5 @@
 # .github/workflows/build.yml
-name: Build Chromium App
+name: Build Chromium App (Cross-Platform)
 
 on:
   push:
@@ -9,12 +9,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Matrix for Linux, Windows, and Mac
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      # 1. Checkout the repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # 1. Checkout repo
+      - uses: actions/checkout@v3
 
       # 2. Set up Python 3.14
       - name: Set up Python
@@ -22,43 +25,51 @@ jobs:
         with:
           python-version: '3.14'
 
-      # 3. Install Python dependencies
-      - name: Install dependencies
+      # 3. Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install screeninfo pyinstaller
 
-      # 4. Create directories for Chromium
+      # 4. Create Chromium directories
       - name: Create directories for Chromium
         run: mkdir -p chromium/linux chromium/windows chromium/mac
 
       # 5. Download Linux Chromium
       - name: Download Linux Chromium
+        if: runner.os == 'Linux'
         run: |
           wget -O chromium/linux/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1582450%2Fchrome-linux.zip?alt=media"
           unzip -q chromium/linux/chrome.zip -d chromium/linux
 
       # 6. Download Windows Chromium
       - name: Download Windows Chromium
+        if: runner.os == 'Windows'
         run: |
-          wget -O chromium/windows/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media"
-          unzip -q chromium/windows/chrome.zip -d chromium/windows
+          powershell -Command "Invoke-WebRequest -OutFile chromium/windows/chrome.zip 'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media'"
+          powershell -Command "Expand-Archive chromium/windows/chrome.zip -DestinationPath chromium/windows"
 
       # 7. Download Mac Chromium
       - name: Download Mac Chromium
+        if: runner.os == 'macOS'
         run: |
-          wget -O chromium/mac/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?alt=media"
+          curl -L -o chromium/mac/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?alt=media"
           unzip -q chromium/mac/chrome.zip -d chromium/mac
 
-      # 8. Build the app with PyInstaller
+      # 8. Build app with PyInstaller
       - name: Build app with PyInstaller
         run: |
-          pyinstaller --onefile your_main_script.py
-          # For GUI apps, use: pyinstaller --onefile --noconsole your_main_script.py
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            pyinstaller --onedir --noconfirm --add-data "chromium/linux:chromium/linux" embchrometest.py
+          elif [[ "$RUNNER_OS" == "Windows" ]]; then
+            pyinstaller --onefile --noconsole --add-data "chromium/windows;chromium/windows" embchrometest.py
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            pyinstaller --onedir --windowed --add-data "chromium/mac/Chromium.app:chromium/mac" embchrometest.py
+          fi
 
-      # 9. Upload the built executable(s) as artifacts
-      - name: Upload build artifacts
+      # 9. Upload artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: chromium-app
+          name: chromium-app-${{ runner.os }}
           path: dist/
