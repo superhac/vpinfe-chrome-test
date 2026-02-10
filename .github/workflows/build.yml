@@ -13,7 +13,8 @@ jobs:
 
     steps:
       # 1. Checkout the repo
-      - uses: actions/upload-artifact@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       # 2. Set up Python 3.14
       - name: Set up Python
@@ -27,38 +28,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install screeninfo pyinstaller
 
-      # 4. Set up directories for Chromium
+      # 4. Create directories for Chromium
       - name: Create directories for Chromium
         run: mkdir -p chromium/linux chromium/windows chromium/mac
 
       # 5. Download Linux Chromium
       - name: Download Linux Chromium
         run: |
-          wget -O chromium/linux/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1582450%2Fchrome-linux.zip?generation=1770732071613898&alt=media
+          wget -O chromium/linux/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1582450%2Fchrome-linux.zip?alt=media"
           unzip -q chromium/linux/chrome.zip -d chromium/linux
 
       # 6. Download Windows Chromium
       - name: Download Windows Chromium
         run: |
-          wget -O chromium/windows/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?generation=1770730132403393&alt=media
+          wget -O chromium/windows/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media"
           unzip -q chromium/windows/chrome.zip -d chromium/windows
 
       # 7. Download Mac Chromium
       - name: Download Mac Chromium
         run: |
-          wget -O chromium/mac/chrome.zip https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?generation=1770732771294362&alt=media
+          wget -O chromium/mac/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?alt=media"
           unzip -q chromium/mac/chrome.zip -d chromium/mac
 
-      # 8. Build the app with PyInstaller-TTTT
+      # 8. Build the app with PyInstaller
       - name: Build app with PyInstaller
         run: |
           pyinstaller --onefile your_main_script.py
-          # If you have a GUI app, you can add --noconsole
-          # pyinstaller --onefile --noconsole your_main_script.py
+          # For GUI apps, use: pyinstaller --onefile --noconsole your_main_script.py
 
-      # 9. Upload the build as an artifact
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+      # 9. Upload the built executable(s) as artifacts
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: chromium-app
           path: dist/
