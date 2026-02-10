@@ -49,12 +49,13 @@ jobs:
           powershell -Command "Invoke-WebRequest -OutFile chromium/windows/chrome.zip 'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Win_x64%2F1582426%2Fchrome-win.zip?alt=media'"
           powershell -Command "Expand-Archive chromium/windows/chrome.zip -DestinationPath chromium/windows"
 
-      # 7. Download Mac Chromium
+      # Mac download step
       - name: Download Mac Chromium
         if: runner.os == 'macOS'
         run: |
           curl -L -o chromium/mac/chrome.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F1582441%2Fchrome-mac.zip?alt=media"
           unzip -q chromium/mac/chrome.zip -d chromium/mac
+          mv chromium/mac/chrome-mac/Chromium.app chromium/mac/Chromium.app
 
       # 8. Build app with PyInstaller
       - name: Build app with PyInstaller
