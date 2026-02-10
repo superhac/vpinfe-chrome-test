@@ -81,7 +81,7 @@ jobs:
           elif [[ "$RUNNER_OS" == "Windows" ]]; then
             pyinstaller --onedir --add-data "chromium/windows;chromium/windows" embchrometest.py
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            pyinstaller --onefile --windowed --add-data --add-data "chromium/mac/Chromium.app:chromium" embchrometest.py
+            pyinstaller --onefile --windowed --add-data "chromium/mac/Chromium.app:chromium" embchrometest.py
           fi
         shell: bash
 
